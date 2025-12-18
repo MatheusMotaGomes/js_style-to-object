@@ -4,36 +4,27 @@
  * @returns {object}
  */
 const convertToObject = (styleString) => {
-  const result = {};
-
   if (!styleString) {
-    return result;
+    return {};
   }
 
-  // 1. Dividimos a string em um array de declarações
-  const lines = styleString.split(';');
+  const styleObject = styleString
+    .split(';') // Divide a string em partes pelo ponto e vírgula
+    .filter((line) => line.trim() !== '') // Remove partes vazias
+    .reduce((acc, line) => {
+      const colonIndex = line.indexOf(':');
 
-  for (const line of lines) {
-    // 2. Removemos espaços extras para ver se a linha tem algo
-    const trimmedLine = line.trim();
+      if (colonIndex !== -1) {
+        const key = line.slice(0, colonIndex).trim();
+        const value = line.slice(colonIndex + 1).trim();
 
-    if (trimmedLine === '') {
-      continue;
-    }
+        acc[key] = value;
+      }
 
-    // 3. Encontramos a posição do primeiro ":" para separar chave e valor
-    const colonIndex = trimmedLine.indexOf(':');
+      return acc;
+    }, {});
 
-    if (colonIndex !== -1) {
-      const key = trimmedLine.slice(0, colonIndex).trim();
-      const value = trimmedLine.slice(colonIndex + 1).trim();
-
-      // 4. Adicionamos ao objeto final
-      result[key] = value;
-    }
-  }
-
-  return result;
+  return styleObject;
 };
 
 module.exports = convertToObject;
